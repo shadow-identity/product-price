@@ -112,8 +112,11 @@
 	td {
 		padding: 3px 10px;
 	}
+	button {
+		width: 2rem;
+	}
 	img {
-		height: 1lh;
+		width: 1rem;
 		aspect-ratio: 1;
 	}
 </style>
