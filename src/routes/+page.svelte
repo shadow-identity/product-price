@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { assets } from '$app/paths';
 	import { get, set } from 'idb-keyval';
+
 	const IDB_KEY = 'products';
 	const makeNewProduct = () => ({ category: '', name: '', price: 0 });
 	type ProductEntry = { category: string; name: string; price: number };
@@ -9,20 +10,23 @@
 		products = result;
 	});
 	let newProduct = $state(makeNewProduct());
+
 	const submit = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			products.push(newProduct);
+			products.unshift(newProduct);
 			newProduct = makeNewProduct();
 			set(IDB_KEY, $state.snapshot(products))
 				.then(() => console.log('worked'))
 				.catch(() => console.log('failed'));
 		}
 	};
+
 	const filteredProducts = $derived.by(() => {
 		if (newProduct.category)
 			return products.filter(({ category }) => category.startsWith(newProduct.category));
 		return products;
 	});
+
 	const remove = (product: ProductEntry) => {
 		const index = products.indexOf(product);
 		products.splice(index, 1);
@@ -40,6 +44,12 @@
 				files
 			});
 		}
+	};
+
+	const edit = (product: ProductEntry) => {
+		const index = products.indexOf(product);
+		products.splice(index, 1);
+		newProduct = product;
 	};
 </script>
 
@@ -73,6 +83,7 @@
 				<td>{product.price}</td>
 				<td>
 					<button onclick={() => remove(product)} type="button" aria-label="Удалить">🗑</button>
+					<button onclick={() => edit(product)} type="button" aria-label="Редактировать">🖋️</button>
 				</td>
 			</tr>
 		{/each}
